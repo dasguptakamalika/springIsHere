@@ -1,0 +1,50 @@
+Bad (stateful singleton) vs Good (stateless singleton):
+// BAD ❌
+// Shared instance field gets overwritten by threads
+
+@Service
+public class PaymentService {
+
+    private String currentUser;
+
+    public void pay(String user) {
+
+        currentUser = user;
+
+        // imagine some delay here
+
+        System.out.println(currentUser + " paid");
+    }
+}
+Problem:
+Thread 1 → pay("Kams")
+Thread 2 → pay("John")
+
+currentUser gets overwritten 
+Output may become:
+John paid
+John paid
+even though Kams also paid.
+Now the correct version:
+// GOOD ✅
+// No shared user-specific state
+
+@Service
+public class PaymentService {
+
+    public void pay(String user) {
+
+        // local variable (thread-safe)
+        String currentUser = user;
+
+        System.out.println(currentUser + " paid");
+    }
+}
+Why safe?
+Thread 1 → own stack → "Kams"
+Thread 2 → own stack → "John"
+No overwriting happens because local variables belong to each thread separately.
+Golden rule:
+Singleton + instance fields holding user data = dangerous
+
+Singleton + method parameters/local variables = safe
