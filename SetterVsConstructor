@@ -1,0 +1,29 @@
+@Service
+public class OrderService {
+
+    private EmailService emailService;
+
+    @Autowired
+    public void setEmailService(EmailService emailService) { 
+        this.emailService = emailService;
+    }
+}
+Constructor injection:
+@Service
+public class OrderService {
+
+    private final EmailService emailService;
+
+    @Autowired
+    public OrderService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+}
+Now the important part:
+In setter injection:
+Spring first creates OrderService
+THEN Spring calls setEmailService()
+So temporarily:
+emailService == null
+In constructor injection:
+Spring cannot even create OrderService unless EmailService is already available.
